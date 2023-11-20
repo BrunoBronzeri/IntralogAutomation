@@ -262,7 +262,7 @@ def writeData(line, set, cmd):
     # Criar função para enviar info ao Arduino e
     #entrar num laço while até Arduino retornar 'tarefa feita' 
     comArd(cmd)
-    getFrom()
+    # getFrom()
 
     # Abre o arquivo CSV para escrita e escreve as linhas modificadas
     with open('estoque.csv', 'w', newline='') as file:
@@ -291,16 +291,16 @@ def getFrom():
 
 def main():
 
-    login()
+    # login()
     
-    #produtos = slots()
-    #product_list()
+    produtos = slots()
+    product_list()
 
     # return 0
 
 while True: #Laço para conexão com o Arduino
     try: #Tenta se conectar ao Arduino
-        arduino = srl.Serial('COM5', 9600) #Cria um elemento conectado a porta COM3
+        arduino = srl.Serial('COM3', 9600) #Cria um elemento conectado a porta COM3
         arduino.flush()
         break
     except Exception: #Se não for possível, imprime a mensagem e dá um delay de 1 segundo
