@@ -78,6 +78,8 @@ def product_list():
             [sg.Text('', key="status_a13")],
             [sg.Button('Estocar', key='be13'), sg.Button('Paletizar', key='bp13')]]),
         ],
+        [sg.Text('')],
+        [sg.Text('')],
         [sg.Frame('Posição 2,1', [[sg.T(s=50)],
             [sg.Text('', key="status_a21")],
             [sg.Button('Estocar', key='be21'), sg.Button('Paletizar', key='bp21')]]),
@@ -90,6 +92,8 @@ def product_list():
             [sg.Text('', key="status_a23")],
             [sg.Button('Estocar', key='be23'), sg.Button('Paletizar', key='bp23')]]),
         ],
+        [sg.Text('')],
+        [sg.Text('')],
         [sg.Frame('Posição 3,1', [[sg.T(s=50)],
             [sg.Text('', key="status_a31")],
             [sg.Button('Estocar', key='be31'), sg.Button('Paletizar', key='bp31')]]),
@@ -102,12 +106,13 @@ def product_list():
             [sg.Text('', key="status_a33")],
             [sg.Button('Estocar', key='be33'), sg.Button('Paletizar', key='bp33')]]),
         ],
-        [sg.Button('Inventário', disabled=True), sg.Text(' '*255),
+        [sg.Text('')],
+        [sg.Button('Inventário', disabled=True), sg.Text(' '*280),
          sg.Button('Atualizar', key='refresh')]
 
     ]
 
-    janela = sg.Window("Automação Intralogística Avançada v1.0", layout1, size=(1200, 400))
+    janela = sg.Window("Automação Intralogística Avançada v1.1", layout1, size=(1300, 500))
 
     positive = 'Produto localizado'
     negative = 'Produto não localizado'
@@ -264,6 +269,27 @@ def writeData(line, set, cmd):
     #entrar num laço while até Arduino retornar 'tarefa feita'
     comArd(cmd)
     # getFrom()
+
+    layout = [
+        [sg.Text(''*100, font=(15))],
+        [sg.Text('Processo em Andamento.  Aguarde!', font=('Segoe UI', 12))],
+        [sg.ProgressBar(100, orientation='h', size=(50, 20), key='progressbar')],
+    ]
+
+    window = sg.Window('Loading', layout, finalize=True, size=(800,200), element_justification='center', text_justification='center')
+
+    for i in range(100):
+        # Atualiza a barra de progresso
+        window['progressbar'].update(i + 1)
+        sleep(0.01)  # Simula um processo de carregamento
+
+        # Eventos e fechamento da janela
+        event = window.read(timeout=10)
+        if event == sg.WIN_CLOSED:
+            break
+
+    window.close()
+
 
     # Abre o arquivo CSV para escrita e escreve as linhas modificadas
     with open('estoque.csv', 'w', newline='') as file:

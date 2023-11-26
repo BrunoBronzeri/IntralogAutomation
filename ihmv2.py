@@ -78,6 +78,8 @@ def product_list():
             [sg.Text('', key="status_a13")],
             [sg.Button('Estocar', key='be13'), sg.Button('Paletizar', key='bp13')]]),
         ],
+        [sg.Text('')],
+        [sg.Text('')],
         [sg.Frame('Posição 2,1', [[sg.T(s=50)],
             [sg.Text('', key="status_a21")],
             [sg.Button('Estocar', key='be21'), sg.Button('Paletizar', key='bp21')]]),
@@ -90,6 +92,8 @@ def product_list():
             [sg.Text('', key="status_a23")],
             [sg.Button('Estocar', key='be23'), sg.Button('Paletizar', key='bp23')]]),
         ],
+        [sg.Text('')],
+        [sg.Text('')],
         [sg.Frame('Posição 3,1', [[sg.T(s=50)],
             [sg.Text('', key="status_a31")],
             [sg.Button('Estocar', key='be31'), sg.Button('Paletizar', key='bp31')]]),
@@ -102,12 +106,13 @@ def product_list():
             [sg.Text('', key="status_a33")],
             [sg.Button('Estocar', key='be33'), sg.Button('Paletizar', key='bp33')]]),
         ],
-        [sg.Button('Inventário', disabled=True), sg.Text(' '*255),
+        [sg.Text('')],
+        [sg.Button('Inventário', disabled=True), sg.Text(' '*280),
          sg.Button('Atualizar', key='refresh')]
 
     ]
 
-    janela = sg.Window("Automação Intralogística Avançada v1.0", layout1, size=(1200, 400))
+    janela = sg.Window("Automação Intralogística Avançada v2.0", layout1, size=(1300, 500))
 
     positive = 'Produto localizado'
     negative = 'Produto não localizado'
@@ -210,37 +215,75 @@ def product_list():
         if botao == sg.WIN_CLOSED:
             break
         
+        pstn = [0]*2
+
         match botao:
-            case 'be11': writeData(1, 1, 'a')
-            case 'bp11': writeData(1, 0, 'A')
+            case 'be11': pstn = [1,1]; comArd('a')
+            case 'bp11': pstn = [1,0]; comArd('A')
 
-            case 'be12': writeData(2, 1, 'b')
-            case 'bp12': writeData(2, 0, 'B')
+            case 'be12': pstn = [2,1]; comArd('b')
+            case 'bp12': pstn = [2,0]; comArd('B')
 
-            case 'be13': writeData(3, 1, 'c')
-            case 'bp13': writeData(3, 0, 'C')
+            case 'be13': pstn = [3,1]; comArd('c')
+            case 'bp13': pstn = [3,0]; comArd('C')
 
-            case 'be21': writeData(4, 1, 'd')
-            case 'bp21': writeData(4, 0, 'D')
+            case 'be21': pstn = [4,1]; comArd('d')
+            case 'bp21': pstn = [4,0]; comArd('D')
 
-            case 'be22': writeData(5, 1, 'e')
-            case 'bp22': writeData(5, 0, 'E')
+            case 'be22': pstn = [5,1]; comArd('e')
+            case 'bp22': pstn = [5,0]; comArd('E')
 
-            case 'be23': writeData(6, 1, 'f')
-            case 'bp23': writeData(6, 0, 'F')
+            case 'be23': pstn = [6,1]; comArd('f')
+            case 'bp23': pstn = [6,0]; comArd('F')
 
-            case 'be31': writeData(7, 1, 'g')
-            case 'bp31': writeData(7, 0, 'G')
+            case 'be31': pstn = [7,1]; comArd('g')
+            case 'bp31': pstn = [7,0]; comArd('G')
 
-            case 'be32': writeData(8, 1, 'h')
-            case 'bp32': writeData(8, 0, 'H')
+            case 'be32': pstn = [8,1]; comArd('h')
+            case 'bp32': pstn = [8,0]; comArd('H')
 
-            case 'be33': writeData(9, 1, 'i')
-            case 'bp33': writeData(9, 0, 'I')
+            case 'be33': pstn = [9,1]; comArd('i')
+            case 'bp33': pstn = [9,0]; comArd('I')
+
+
+        if pstn[0] != 0:
+
+            layout = [
+            [sg.Text(''*100, font=(15))],
+            [sg.Text('Processo em Andamento.  Aguarde!', font=('Segoe UI', 12))],
+            [sg.ProgressBar(100, orientation='h', size=(50, 20), key='progressbar')],
+            ]
+
+            janela['be11'].update(disabled=True); janela['bp11'].update(disabled=True)
+            janela['be12'].update(disabled=True); janela['bp12'].update(disabled=True)
+            janela['be13'].update(disabled=True); janela['bp13'].update(disabled=True)
+            janela['be21'].update(disabled=True); janela['bp21'].update(disabled=True)
+            janela['be22'].update(disabled=True); janela['bp22'].update(disabled=True)
+            janela['be23'].update(disabled=True); janela['bp23'].update(disabled=True)
+            janela['be31'].update(disabled=True); janela['bp31'].update(disabled=True)
+            janela['be32'].update(disabled=True); janela['bp32'].update(disabled=True)
+            janela['be33'].update(disabled=True); janela['bp33'].update(disabled=True)
+
+            window = sg.Window('Loading', layout, finalize=True, size=(800,200), element_justification='center')
+
+            for i in range(100):
+                # Atualiza a barra de progresso
+                window['progressbar'].update(i + 1)
+                sleep(0.1)  # Simula um processo de carregamento
+
+                # Eventos e fechamento da janela
+                event = window.read(timeout=10)
+                if event == sg.WIN_CLOSED:
+                    break
+
+            window.close()
+
+            writeData(pstn[0], pstn[1])
+
 
 
         
-def writeData(line, set, cmd):
+def writeData(line, set):
     
     # Abre o arquivo CSV para leitura
     with open('estoque.csv', 'r') as file:
@@ -262,8 +305,10 @@ def writeData(line, set, cmd):
 
     # Criar função para enviar info ao Arduino e
     #entrar num laço while até Arduino retornar 'tarefa feita'
-    comArd(cmd)
     # getFrom()
+
+    
+
 
     # Abre o arquivo CSV para escrita e escreve as linhas modificadas
     with open('estoque.csv', 'w', newline='') as file:
@@ -274,7 +319,6 @@ def writeData(line, set, cmd):
 def comArd(cmd):
     arduino.write(cmd.encode()) #Envia o comando UTF-8
     arduino.flush() #Limpa o serial
-    sleep(0.5)
 
 
 def getFrom():
