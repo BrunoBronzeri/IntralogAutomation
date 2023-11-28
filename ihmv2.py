@@ -112,7 +112,7 @@ def product_list():
 
     ]
 
-    janela = sg.Window("Automação Intralogística Avançada v2.0", layout1, size=(1300, 500))
+    janela = sg.Window("Automação Intralogística Avançada v2.0", layout1, size=(1366, 768))
 
     positive = 'Produto localizado'
     negative = 'Produto não localizado'
@@ -266,10 +266,10 @@ def product_list():
 
             window = sg.Window('Loading', layout, finalize=True, size=(800,200), element_justification='center')
 
-            for i in range(100):
+            for i in range(400):
                 # Atualiza a barra de progresso
-                window['progressbar'].update(i + 1)
-                sleep(0.1)  # Simula um processo de carregamento
+                window['progressbar'].update(i/4 + 0.25)
+                sleep(0.6)  # Simula um processo de carregamento
 
                 # Eventos e fechamento da janela
                 event = window.read(timeout=10)
@@ -303,13 +303,8 @@ def writeData(line, set):
     if 1 <= linha_desejada <= len(linhas):
         linhas[linha_desejada - 1][1] = linha_modificada
 
-    # Criar função para enviar info ao Arduino e
-    #entrar num laço while até Arduino retornar 'tarefa feita'
     # getFrom()
-
     
-
-
     # Abre o arquivo CSV para escrita e escreve as linhas modificadas
     with open('estoque.csv', 'w', newline='') as file:
         writer = csv.writer(file)
